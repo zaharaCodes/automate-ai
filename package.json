@@ -2,11 +2,10 @@
   "name": "automate-ai",
   "version": "1.0.0",
   "description": "AI-powered automation platform",
-  "main": "api/index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "IS_LOCAL=true node server.js",
-    "dev": "IS_LOCAL=true nodemon server.js",
-    "vercel-build": "echo 'Build complete'"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [
     "ai",
