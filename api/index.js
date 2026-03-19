@@ -380,4 +380,6 @@ if (process.env.IS_LOCAL) {
     });
 }
 
-module.exports = app;
+const serverless = require("serverless-http");
+
+module.exports = serverless(app);
