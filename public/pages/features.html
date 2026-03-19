@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AutoMate AI — Features</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.page-hero{padding:140px 0 80px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.page-hero::before{
+  content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);
+  width:800px;height:500px;
+  background:radial-gradient(ellipse,rgba(99,102,241,0.1),transparent 65%);
+  pointer-events:none;
+}
+.page-hero .sub{margin:0 auto}
+
+.feats-full{padding:80px 0}
+.feats-section{margin-bottom:72px}
+.feats-section-label{
+  display:flex;align-items:center;gap:14px;margin-bottom:32px;
+}
+.feats-section-label h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2)}
+.feats-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.feat-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  border-radius:var(--r-lg);overflow:hidden;
+  margin-bottom:16px;
+}
+.feat-row.trio{grid-template-columns:1fr 1fr 1fr}
+.feat-cell{
+  background:var(--bg2);padding:32px;
+  transition:background 0.2s;
+}
+.feat-cell:hover{background:var(--bg3)}
+
+.feat-cell-ico{
+  width:42px;height:42px;
+  background:var(--bg4);border:1px solid var(--border2);
+  border-radius:11px;display:flex;align-items:center;justify-content:center;
+  color:var(--accent);margin-bottom:16px;
+}
+.feat-cell h3{font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-0.2px}
+.feat-cell p{font-size:13px;color:var(--text2);line-height:1.65}
+.feat-cell ul{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.feat-cell ul li{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:13px;color:var(--text2);
+}
+.feat-cell ul li::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;margin-top:7px;
+}
+
+/* Compare table */
+.compare{padding:80px 0;border-top:1px solid var(--border)}
+.compare-table{
+  width:100%;border-collapse:collapse;margin-top:48px;
+  border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;
+}
+.compare-table th{
+  padding:18px 24px;text-align:left;
+  background:var(--bg3);font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.8px;color:var(--text2);
+  border-bottom:1px solid var(--border);
+}
+.compare-table th:not(:first-child){text-align:center}
+.compare-table td{
+  padding:16px 24px;font-size:14px;color:var(--text2);
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table td:not(:first-child){text-align:center}
+.compare-table tr:hover td{background:var(--bg3)}
+
+.check{color:var(--green);font-size:16px}
+.cross{color:var(--text3)}
+
+.cta-row{
+  display:flex;gap:14px;flex-wrap:wrap;
+  margin-top:48px;justify-content:center;
+}
+
+@media(max-width:768px){
+  .feat-row{grid-template-columns:1fr}
+  .feat-row.trio{grid-template-columns:1fr}
+  .compare-table{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-icon">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="15" fill="url(#lg)"/>
+      <path d="M26 14L31 23H37L30 31.5L32.5 39L26 35.5L19.5 39L22 31.5L15 23H21L26 14Z" fill="white"/>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="52" y2="52"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+    </svg>
+  </div>
+  <div class="ld-name">AutoMate<em>AI</em></div>
+  <div class="ld-track"><div class="ld-fill"></div></div>
+  <div class="ld-msg" id="ldMsg">Loading features...</div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L11.5 7H16L11.5 11L13.5 16L9 13.5L4.5 16L6.5 11L2 7H6.5L9 2Z" fill="white"/></svg></div>
+      <span class="logo-text">AutoMate<em>AI</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="features.html" class="active">Features</a>
+      <a href="try.html">Try AI</a>
+      <a href="pricing.html">Pricing</a>
+    </div>
+    <div class="nav-actions">
+      <div id="navGuest"><button class="btn btn-ghost" id="navLoginBtn">Sign in</button><button class="btn btn-primary" id="navRegisterBtn">Get started</button></div>
+      <div id="navUser" class="hidden" style="display:flex;align-items:center;gap:8px"><span id="navUserInfo"></span><button class="btn btn-ghost" id="logoutBtn">Logout</button></div>
+    </div>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="tag" style="justify-content:center">Features</div>
+    <h1 class="h1" style="margin-bottom:18px">Five tools.<br/><span class="gtext">Zero learning curve.</span></h1>
+    <p class="sub" style="margin:0 auto 32px">Every tool is powered by advanced AI and is available the moment you sign up. No configuration, no API keys needed from your end.</p>
+    <a href="try.html" class="btn btn-primary btn-lg">Try everything free</a>
+  </div>
+</section>
+
+<section class="feats-full">
+  <div class="container">
+
+    <div class="feats-section">
+      <div class="feats-section-label"><h2>Writing & Communication</h2></div>
+      <div class="feat-row">
+        <div class="feat-cell">
+          <div class="feat-cell-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8"/></svg></div>
+          <h3>Smart Email Writer</h3>
+          <p>Paste any email you received and get 3 AI-written replies instantly. Choose the tone that fits.</p>
+          <ul>
+            <li>Professional tone — polished and formal</li>
+            <li>Casual tone — friendly and human</li>
+            <li>Short tone — concise and to the point</li>
+            <li>Copy with one click</li>
+          </ul>
+        </div>
+        <div class="feat-cell">
+          <div class="feat-cell-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <h3>Content Creator</h3>
+          <p>Give a topic and pick a platform — AI writes the perfect post complete with hashtags.</p>
+          <ul>
+            <li>Instagram captions that hook</li>
+            <li>LinkedIn posts that get engagement</li>
+            <li>Twitter / X threads and posts</li>
+            <li>Auto-generated relevant hashtags</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="feats-section">
+      <div class="feats-section-label"><h2>Research & Analysis</h2></div>
+      <div class="feat-row">
+        <div class="feat-cell">
+          <div class="feat-cell-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <h3>Document Summarizer</h3>
+          <p>Paste any text — articles, PDFs, reports, meeting notes — and get a structured 5-point summary.</p>
+          <ul>
+            <li>Works on any length of text</li>
+            <li>Bullet-point output, easy to scan</li>
+            <li>Retains key data and context</li>
+            <li>Copy summary instantly</li>
+          </ul>
+        </div>
+        <div class="feat-cell">
+          <div class="feat-cell-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <h3>AI Chat Assistant</h3>
+          <p>A full conversational AI that explains, researches, writes code, and solves problems. Available 24/7.</p>
+          <ul>
+            <li>Explains complex concepts clearly</li>
+            <li>Writes and reviews code</li>
+            <li>Helps brainstorm and ideate</li>
+            <li>Remembers context within session</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="feats-section">
+      <div class="feats-section-label"><h2>Visual Creation</h2></div>
+      <div class="feat-row" style="grid-template-columns:1fr">
+        <div class="feat-cell">
+          <div class="feat-cell-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>AI Image Generator — 100% Free</h3>
+          <p>Describe what you want — AI creates stunning images in realistic, artistic, anime, or 3D styles.</p>
+          <div class="feat-row trio" style="margin-top:20px;border-radius:var(--r);overflow:hidden">
+            <div class="feat-cell" style="padding:20px 22px">
+              <h3 style="font-size:14px;margin-bottom:6px">Realistic</h3>
+              <p style="font-size:12px">Photographic, high-detail 8K quality images</p>
+            </div>
+            <div class="feat-cell" style="padding:20px 22px">
+              <h3 style="font-size:14px;margin-bottom:6px">Artistic</h3>
+              <p style="font-size:12px">Digital art, painterly, trending on ArtStation</p>
+            </div>
+            <div class="feat-cell" style="padding:20px 22px">
+              <h3 style="font-size:14px;margin-bottom:6px">Anime / 3D</h3>
+              <p style="font-size:12px">Studio Ghibli anime or cinema-quality 3D render</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMPARE TABLE -->
+<section class="compare">
+  <div class="container">
+    <div class="tag">Compare</div>
+    <h2 class="h2">What's in each plan.</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Free</th>
+          <th>Pro — $19/mo</th>
+          <th>Enterprise</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Email writer</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Document summarizer</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Content generator</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>AI chat assistant</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Image generator</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Daily AI requests</td><td>100</td><td>Unlimited</td><td>Unlimited</td></tr>
+        <tr><td>Priority AI speed</td><td class="cross">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>API access</td><td class="cross">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Custom AI models</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr><td>SLA guarantee</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr><td>Support</td><td>Community</td><td>Priority email</td><td>Dedicated</td></tr>
+      </tbody>
+    </table>
+    <div class="cta-row">
+      <a href="auth.html?tab=register" class="btn btn-primary btn-lg">Start free — no card needed</a>
+      <a href="pricing.html" class="btn btn-ghost btn-lg">See pricing details</a>
+    </div>
+  </div>
+</section>
+
+<section style="padding:80px 0;border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="tag">Under the Hood</div>
+    <h2 class="h2" style="margin-bottom:12px">Enterprise-grade<br/><span class="gtext">infrastructure.</span></h2>
+    <p style="font-size:15px;color:var(--text2);margin-bottom:48px">AutoMate AI is built for reliability, speed, and security — so you can focus on getting things done.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--cyan))"></div>
+        <div style="width:44px;height:44px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#818cf8">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2a2 2 0 012 2v1h2a2 2 0 012 2v2h1a2 2 0 010 4h-1v2a2 2 0 01-2 2h-2v1a2 2 0 01-4 0v-1H8a2 2 0 01-2-2v-2H5a2 2 0 010-4h1V7a2 2 0 012-2h2V4a2 2 0 012-2z" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M9 14s1 1.5 3 1.5 3-1.5 3-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px">Advanced AI Engine</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.65">State-of-the-art language model delivering fast, natural, and accurate responses for all five tools.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),#818cf8)"></div>
+        <div style="width:44px;height:44px;background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#22d3ee">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px">AI Image Generation</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.65">High-quality diffusion model producing stunning images in realistic, artistic, anime, and 3D styles.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#818cf8,#f59e0b)"></div>
+        <div style="width:44px;height:44px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#fbbf24">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H12L11 22L19.5 10.5H12L13 2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px">Fast REST API</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.65">Lightweight Node.js backend with sub-second response times and intelligent request handling.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#10b981,var(--accent))"></div>
+        <div style="width:44px;height:44px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#34d399">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px">Secure Authentication</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.65">Industry-standard encrypted authentication keeps your account and data safe at all times.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#f59e0b,#f43f5e)"></div>
+        <div style="width:44px;height:44px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#fb7185">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="5" rx="8" ry="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 5v5c0 1.66 3.58 3 8 3s8-1.34 8-3V5" stroke="currentColor" stroke-width="1.8"/><path d="M4 10v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px">Cloud Database</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.65">Scalable cloud database ensuring your history, settings, and account data are always available.</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(34,211,238,0.04));border:1px solid rgba(99,102,241,0.2);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+        <div style="width:44px;height:44px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#818cf8">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C12 2 7 6 7 13h10c0-7-5-11-5-11z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13v3a3 3 0 006 0v-3" stroke="currentColor" stroke-width="1.8"/><path d="M7 13c-1.5 0-3 1-3 3l2 2M17 13c1.5 0 3 1 3 3l-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px">Ready to Start?</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:16px">All tools available instantly on the free plan.</div>
+        <a href="auth.html?tab=register" style="padding:9px 20px;background:var(--accent);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.18s" onmouseover="this.style.background='#5254e8'" onmouseout="this.style.background='var(--accent)'">Get started free →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="../js/shared.js"></script>
+</body>
+</html>

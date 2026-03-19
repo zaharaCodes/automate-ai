@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AutoMate AI — Sign In</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.auth-page{
+  min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:80px 20px 40px;
+  position:relative;overflow:hidden;
+}
+.auth-page::before{
+  content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:700px;height:600px;
+  background:radial-gradient(ellipse,rgba(99,102,241,0.1),transparent 65%);
+  pointer-events:none;
+}
+
+.auth-card{
+  width:100%;max-width:420px;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:20px;padding:40px;
+  position:relative;
+  animation:slideUp 0.4s var(--ease) both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+.auth-logo{
+  display:flex;align-items:center;gap:9px;
+  text-decoration:none;margin-bottom:32px;
+}
+.auth-logo .logo-text{font-size:16px;font-weight:800;color:var(--text)}
+.auth-logo .logo-text em{font-style:normal;color:var(--accent)}
+
+.auth-tabs{
+  display:flex;gap:4px;background:var(--bg3);
+  border-radius:10px;padding:4px;margin-bottom:28px;
+}
+.auth-tab{
+  flex:1;padding:8px;border:none;background:transparent;
+  color:var(--text3);font-family:var(--font);font-size:14px;
+  font-weight:600;border-radius:7px;cursor:pointer;transition:all 0.2s;
+}
+.auth-tab.active{
+  background:var(--bg2);color:var(--text);
+  border:1px solid var(--border2);
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+
+.auth-form{display:none}
+.auth-form.active{display:block}
+
+.auth-heading{margin-bottom:24px}
+.auth-heading h1{font-size:22px;font-weight:700;letter-spacing:-0.4px;margin-bottom:5px}
+.auth-heading p{font-size:13px;color:var(--text3)}
+
+.divider{
+  display:flex;align-items:center;gap:12px;
+  margin:20px 0;font-size:12px;color:var(--text3);
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.back-home{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--text3);text-decoration:none;
+  margin-top:20px;justify-content:center;transition:color 0.2s;
+}
+.back-home:hover{color:var(--text2)}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-icon">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="15" fill="url(#lg)"/>
+      <path d="M26 14L31 23H37L30 31.5L32.5 39L26 35.5L19.5 39L22 31.5L15 23H21L26 14Z" fill="white"/>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="52" y2="52"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+    </svg>
+  </div>
+  <div class="ld-name">AutoMate<em>AI</em></div>
+  <div class="ld-track"><div class="ld-fill"></div></div>
+  <div class="ld-msg" id="ldMsg">Initializing...</div>
+</div>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <a href="../index.html" class="auth-logo">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L11.5 7H16L11.5 11L13.5 16L9 13.5L4.5 16L6.5 11L2 7H6.5L9 2Z" fill="white"/></svg>
+      </div>
+      <span class="logo-text">AutoMate<em>AI</em></span>
+    </a>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Sign In</button>
+      <button class="auth-tab" data-tab="register">Create Account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form active" id="form-login">
+      <div class="auth-heading">
+        <h1>Welcome back</h1>
+        <p>Sign in to your AutoMate AI account</p>
+      </div>
+      <div id="loginAlert" class="hidden"></div>
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com"/></div>
+      <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Your password"/></div>
+      <button class="btn btn-primary btn-full" id="loginBtn" style="margin-top:4px">
+        Sign in
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="divider">or</div>
+      <p style="text-align:center;font-size:13px;color:var(--text3)">No account? <a href="#" data-switch="register" style="color:var(--accent);text-decoration:none;font-weight:600">Create one free →</a></p>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-form" id="form-register">
+      <div class="auth-heading">
+        <h1>Get started free</h1>
+        <p>100 AI requests/day · No credit card needed</p>
+      </div>
+      <div id="registerAlert" class="hidden"></div>
+      <div class="field"><label>Full Name</label><input type="text" id="regName" placeholder="Your name"/></div>
+      <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com"/></div>
+      <div class="field"><label>Password</label><input type="password" id="regPass" placeholder="Min 8 characters"/></div>
+      <button class="btn btn-primary btn-full" id="registerBtn" style="margin-top:4px">
+        Create account
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="divider">or</div>
+      <p style="text-align:center;font-size:13px;color:var(--text3)">Have an account? <a href="#" data-switch="login" style="color:var(--accent);text-decoration:none;font-weight:600">Sign in →</a></p>
+    </div>
+
+    <a href="../index.html" class="back-home">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 6H3M5 3L2 6l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to home
+    </a>
+  </div>
+</div>
+
+<script src="../js/shared.js"></script>
+<script>
+// Redirect if already logged in
+if (getToken() && getUser()) {
+  window.location.href = '../pages/dashboard.html';
+}
+
+// Tab from URL
+const urlTab = new URLSearchParams(location.search).get('tab');
+if (urlTab === 'register') switchAuthTab('register');
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('form-login').classList.toggle('active', tab === 'login');
+  document.getElementById('form-register').classList.toggle('active', tab === 'register');
+  document.getElementById('loginAlert').classList.add('hidden');
+  document.getElementById('registerAlert').classList.add('hidden');
+}
+
+document.querySelectorAll('.auth-tab').forEach(btn => {
+  btn.addEventListener('click', () => switchAuthTab(btn.dataset.tab));
+});
+document.querySelectorAll('[data-switch]').forEach(a => {
+  a.addEventListener('click', e => { e.preventDefault(); switchAuthTab(a.dataset.switch); });
+});
+
+function showAlert(id, msg, type='error') {
+  const el = document.getElementById(id);
+  el.className = `alert alert-${type}`;
+  el.textContent = msg;
+}
+
+// LOGIN
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  if (!email || !pass) return showAlert('loginAlert','Please fill in all fields.');
+  const btn = document.getElementById('loginBtn');
+  btnLoading(btn, true);
+  try {
+    const data = await apiCall('/api/auth/login', { email, password: pass });
+    if (!data.success) throw new Error(data.error);
+    saveAuth(data.token, data.user);
+    window.location.href = '../pages/dashboard.html';
+  } catch(e) {
+    showAlert('loginAlert', e.message || 'Login failed.');
+  } finally {
+    btnLoading(btn, false, 'Sign in <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  }
+});
+
+// REGISTER
+document.getElementById('registerBtn').addEventListener('click', async () => {
+  const name  = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPass').value;
+  if (!name || !email || !pass) return showAlert('registerAlert','Please fill in all fields.');
+  if (pass.length < 8) return showAlert('registerAlert','Password must be at least 8 characters.');
+  const btn = document.getElementById('registerBtn');
+  btnLoading(btn, true);
+  try {
+    const data = await apiCall('/api/auth/register', { name, email, password: pass });
+    if (!data.success) throw new Error(data.error);
+    saveAuth(data.token, data.user);
+    window.location.href = '../pages/dashboard.html';
+  } catch(e) {
+    showAlert('registerAlert', e.message || 'Registration failed.');
+  } finally {
+    btnLoading(btn, false, 'Create account <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  }
+});
+
+// Enter key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const activeForm = document.querySelector('.auth-form.active');
+    if (activeForm.id === 'form-login') document.getElementById('loginBtn').click();
+    else document.getElementById('registerBtn').click();
+  }
+});
+</script>
+</body>
+</html>

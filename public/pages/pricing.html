@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AutoMate AI — Pricing</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.page-hero{padding:140px 0 72px;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{
+  content:'';position:fixed;top:-150px;left:50%;transform:translateX(-50%);
+  width:700px;height:500px;
+  background:radial-gradient(ellipse,rgba(99,102,241,0.09),transparent 65%);
+  pointer-events:none;
+}
+
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin:56px 0;align-items:start;
+}
+
+.price-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:20px;padding:36px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.25s,transform 0.25s;
+}
+.price-card:hover{transform:translateY(-3px);border-color:var(--border2)}
+.price-card.featured{
+  border-color:rgba(var(--aRGB),0.35);
+  background:linear-gradient(160deg,rgba(var(--aRGB),0.06) 0%,var(--bg2) 60%);
+}
+.price-card.featured::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(var(--aRGB),0.7),transparent);
+}
+
+.price-badge{
+  display:inline-block;font-family:var(--mono);font-size:10px;
+  text-transform:uppercase;letter-spacing:1px;
+  padding:4px 10px;border-radius:99px;margin-bottom:20px;
+  background:var(--bg3);border:1px solid var(--border);color:var(--text3);
+}
+.price-badge.hot{
+  background:rgba(var(--aRGB),0.1);
+  border-color:rgba(var(--aRGB),0.3);color:var(--accent);
+}
+
+.price-name{font-size:18px;font-weight:700;margin-bottom:8px}
+.price-amount{
+  display:flex;align-items:flex-start;gap:4px;
+  margin-bottom:28px;line-height:1;
+}
+.price-curr{font-size:18px;font-weight:600;color:var(--text2);margin-top:10px}
+.price-num{font-size:52px;font-weight:900;letter-spacing:-3px}
+.price-per{font-size:14px;color:var(--text2);align-self:flex-end;margin-bottom:6px}
+.price-custom{font-size:36px;font-weight:800;letter-spacing:-1.5px;margin-bottom:28px}
+
+.price-list{list-style:none;margin-bottom:32px;display:flex;flex-direction:column;gap:11px}
+.price-list li{
+  display:flex;align-items:flex-start;gap:9px;
+  font-size:13.5px;color:var(--text2);line-height:1.5;
+}
+.price-list li .ck{color:var(--green);flex-shrink:0;font-size:14px;margin-top:1px}
+.price-list li .cx{color:var(--text3);flex-shrink:0;font-size:14px;margin-top:1px}
+
+.price-divider{height:1px;background:var(--border);margin:20px 0}
+
+/* FAQ */
+.faq{padding:80px 0;border-top:1px solid var(--border)}
+.faq-list{margin-top:40px;display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.faq-item{background:var(--bg2)}
+.faq-q{
+  width:100%;padding:22px 28px;border:none;background:transparent;
+  color:var(--text);font-family:var(--font);font-size:15px;font-weight:600;
+  text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;transition:background 0.2s;
+}
+.faq-q:hover{background:var(--bg3)}
+.faq-q svg{flex-shrink:0;color:var(--text3);transition:transform 0.2s}
+.faq-item.open .faq-q svg{transform:rotate(45deg)}
+.faq-a{
+  padding:0 28px;font-size:14px;color:var(--text2);line-height:1.75;
+  max-height:0;overflow:hidden;transition:max-height 0.3s var(--ease),padding 0.3s;
+}
+.faq-item.open .faq-a{max-height:300px;padding:0 28px 24px}
+
+@media(max-width:900px){
+  .pricing-grid{grid-template-columns:1fr;max-width:420px;margin:56px auto}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-icon">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="15" fill="url(#lg)"/>
+      <path d="M26 14L31 23H37L30 31.5L32.5 39L26 35.5L19.5 39L22 31.5L15 23H21L26 14Z" fill="white"/>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="52" y2="52"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+    </svg>
+  </div>
+  <div class="ld-name">AutoMate<em>AI</em></div>
+  <div class="ld-track"><div class="ld-fill"></div></div>
+  <div class="ld-msg" id="ldMsg">Loading pricing...</div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L11.5 7H16L11.5 11L13.5 16L9 13.5L4.5 16L6.5 11L2 7H6.5L9 2Z" fill="white"/></svg></div>
+      <span class="logo-text">AutoMate<em>AI</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="try.html">Try AI</a>
+      <a href="pricing.html" class="active">Pricing</a>
+    </div>
+    <div class="nav-actions">
+      <div id="navGuest"><button class="btn btn-ghost" id="navLoginBtn">Sign in</button><button class="btn btn-primary" id="navRegisterBtn">Get started</button></div>
+      <div id="navUser" class="hidden" style="display:flex;align-items:center;gap:8px"><span id="navUserInfo"></span><button class="btn btn-ghost" id="logoutBtn">Logout</button></div>
+    </div>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="tag" style="justify-content:center">Pricing</div>
+    <h1 class="h1" style="margin-bottom:16px">Simple pricing.<br/><span class="gtext">Start free.</span></h1>
+    <p class="sub" style="margin:0 auto">No hidden fees. No surprise charges. The free plan includes all 5 AI tools — upgrade only when you need more.</p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="pricing-grid">
+
+    <!-- FREE -->
+    <div class="price-card">
+      <div class="price-badge">Starter</div>
+      <div class="price-name">Free Forever</div>
+      <div class="price-amount"><span class="price-curr">$</span><span class="price-num">0</span><span class="price-per">/month</span></div>
+      <ul class="price-list">
+        <li><span class="ck">✓</span> 100 AI requests per day</li>
+        <li><span class="ck">✓</span> Email writer (3 tones)</li>
+        <li><span class="ck">✓</span> Document summarizer</li>
+        <li><span class="ck">✓</span> Social content generator</li>
+        <li><span class="ck">✓</span> AI chat assistant</li>
+        <li><span class="ck">✓</span> Image generator</li>
+        <li><span class="cx">✗</span> Priority AI speed</li>
+        <li><span class="cx">✗</span> API access</li>
+      </ul>
+      <a href="auth.html?tab=register" class="btn btn-outline btn-full">Get started free</a>
+    </div>
+
+    <!-- PRO -->
+    <div class="price-card featured">
+      <div class="price-badge hot">Most Popular</div>
+      <div class="price-name">Pro</div>
+      <div class="price-amount"><span class="price-curr">$</span><span class="price-num">19</span><span class="price-per">/month</span></div>
+      <ul class="price-list">
+        <li><span class="ck">✓</span> <strong>Unlimited</strong> AI requests</li>
+        <li><span class="ck">✓</span> Everything in Free</li>
+        <li><span class="ck">✓</span> Priority AI response speed</li>
+        <li><span class="ck">✓</span> Advanced automation flows</li>
+        <li><span class="ck">✓</span> Full API access</li>
+        <li><span class="ck">✓</span> Priority email support</li>
+        <li><span class="ck">✓</span> Early access to new tools</li>
+        <li><span class="ck">✓</span> Usage analytics dashboard</li>
+      </ul>
+      <a href="auth.html?tab=register" class="btn btn-primary btn-full">Upgrade to Pro</a>
+    </div>
+
+    <!-- ENTERPRISE -->
+    <div class="price-card">
+      <div class="price-badge">Enterprise</div>
+      <div class="price-name">Custom</div>
+      <div class="price-custom gtext">Let's Talk</div>
+      <ul class="price-list">
+        <li><span class="ck">✓</span> Everything in Pro</li>
+        <li><span class="ck">✓</span> Custom fine-tuned AI models</li>
+        <li><span class="ck">✓</span> Dedicated account manager</li>
+        <li><span class="ck">✓</span> On-premise deployment option</li>
+        <li><span class="ck">✓</span> SLA guarantee (99.9% uptime)</li>
+        <li><span class="ck">✓</span> Custom integrations</li>
+        <li><span class="ck">✓</span> Team management dashboard</li>
+        <li><span class="ck">✓</span> Invoice billing</li>
+      </ul>
+      <a href="/cdn-cgi/l/email-protection#b7dfd2dbdbd8f7d6c2c3d8dad6c3d2d6de99d4d8da" class="btn btn-outline btn-full">Contact sales</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <div class="tag">FAQ</div>
+    <h2 class="h2" style="margin-bottom:0">Common questions.</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">
+          Do I need a credit card to sign up?
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a">No. The free plan requires only an email and password. No credit card, no trial period — it's free permanently with 100 AI requests per day.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          What counts as an "AI request"?
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a">Each time you generate email replies, summarize a document, create content, send a chat message, or generate an image — that counts as one request. The counter resets every day at midnight.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          Is the image generator really free?
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a">Yes. Image generation is included in all plans at no extra cost. You can generate as many images as you want.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          Can I cancel my Pro subscription anytime?
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a">Absolutely. Cancel anytime from your account settings. You'll keep Pro access until the end of your billing period, then drop back to the free tier — no penalties.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          What AI model powers the tools?
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a">AutoMate AI uses enterprise-grade AI models for all text generation tools. Image generation uses a high-quality diffusion model.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../js/shared.js"></script>
+<script>
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.que

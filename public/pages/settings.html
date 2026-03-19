@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AutoMate AI — Settings</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.dash-layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:62px}
+.dash-sidebar{background:var(--bg1);border-right:1px solid var(--border);padding:24px 14px;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.sb-section{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);padding:4px 10px;margin:10px 0 4px}
+.sb-section:first-child{margin-top:0}
+.sb-link{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r-sm);color:var(--text2);font-size:13.5px;font-weight:500;text-decoration:none;transition:all 0.15s}
+.sb-link:hover{background:var(--bg3);color:var(--text)}
+.sb-link.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.sb-link svg{flex-shrink:0;color:var(--accent)}
+.sb-profile{margin-top:auto;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r)}
+.sb-profile-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.sb-profile-email{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;word-break:break-all}
+
+.settings-main{padding:40px 48px;overflow-y:auto;min-width:0;max-width:700px}
+.settings-main h1{font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.settings-main .sub{font-size:14px;color:var(--text2);margin-bottom:36px}
+
+.settings-section{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r-lg);overflow:hidden;margin-bottom:20px;
+}
+.settings-section-head{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.settings-section-head h2{font-size:15px;font-weight:700}
+.settings-section-head p{font-size:13px;color:var(--text3);margin-top:2px}
+.settings-body{padding:24px}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.save-row{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.save-note{font-size:12px;color:var(--green);display:none}
+.save-note.show{display:block}
+
+/* Danger zone */
+.danger-section{background:var(--bg2);border:1px solid rgba(244,63,94,0.25);border-radius:var(--r-lg);overflow:hidden;margin-bottom:20px}
+.danger-head{padding:20px 24px;border-bottom:1px solid rgba(244,63,94,0.15)}
+.danger-head h2{font-size:15px;font-weight:700;color:var(--red)}
+.danger-head p{font-size:13px;color:var(--text3);margin-top:2px}
+.danger-body{padding:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.danger-body p{font-size:13px;color:var(--text2);line-height:1.6}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(244,63,94,0.35);border-radius:var(--r-sm);padding:9px 18px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;white-space:nowrap;flex-shrink:0}
+.btn-danger:hover{background:rgba(244,63,94,0.08);border-color:var(--red)}
+
+/* Delete confirm modal */
+.del-modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+.del-modal.hidden{display:none}
+.del-box{background:var(--bg2);border:1px solid rgba(244,63,94,0.3);border-radius:20px;padding:36px;max-width:400px;width:100%;animation:slideUp 0.3s var(--ease)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.del-box h2{font-size:20px;font-weight:700;margin-bottom:10px}
+.del-box p{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:24px}
+.del-actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* Plan badge */
+.plan-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:1px;padding:4px 10px;border-radius:99px;
+  background:rgba(var(--aRGB),0.1);border:1px solid rgba(var(--aRGB),0.25);color:var(--accent);
+}
+
+@media(max-width:900px){
+  .dash-layout{grid-template-columns:1fr}
+  .dash-sidebar{position:static;height:auto;flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:10px 14px;gap:5px}
+  .sb-section,.sb-profile{display:none}
+  .sb-link{white-space:nowrap;flex-shrink:0}
+  .settings-main{padding:20px 18px;max-width:100%}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-icon"><svg width="52" height="52" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="15" fill="url(#lg)"/><path d="M26 14L31 23H37L30 31.5L32.5 39L26 35.5L19.5 39L22 31.5L15 23H21L26 14Z" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="52" y2="52"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs></svg></div>
+  <div class="ld-name">AutoMate<em>AI</em></div>
+  <div class="ld-track"><div class="ld-fill"></div></div>
+  <div class="ld-msg" id="ldMsg">Loading settings...</div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="del-modal hidden" id="delModal">
+  <div class="del-box">
+    <h2>Delete your account?</h2>
+    <p>This will permanently delete your account and all your data. This action <strong>cannot be undone</strong>.</p>
+    <div id="delAlert"></div>
+    <div class="del-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('delModal').classList.add('hidden')">Cancel</button>
+      <button class="btn-danger" id="confirmDelBtn">Yes, delete my account</button>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L11.5 7H16L11.5 11L13.5 16L9 13.5L4.5 16L6.5 11L2 7H6.5L9 2Z" fill="white"/></svg></div>
+      <span class="logo-text">AutoMate<em>AI</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="try.html">Try AI</a>
+      <a href="pricing.html">Pricing</a>
+    </div>
+    <div class="nav-actions">
+      <div id="navGuest"><button class="btn btn-ghost" id="navLoginBtn">Sign in</button><button class="btn btn-primary" id="navRegisterBtn">Get started</button></div>
+      <div id="navUser" class="hidden" style="display:flex;align-items:center;gap:8px"><span id="navUserInfo"></span><button class="btn btn-ghost" id="logoutBtn">Logout</button></div>
+    </div>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="sb-section">Menu</div>
+    <a href="dashboard.html" class="sb-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>
+      Dashboard
+    </a>
+    <a href="try.html" class="sb-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Try AI Tools
+    </a>
+    <a href="settings.html" class="sb-link active">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.8"/></svg>
+      Settings
+    </a>
+    <div class="sb-profile" id="sbProfile"></div>
+  </aside>
+
+  <main class="settings-main">
+    <h1>Settings</h1>
+    <p class="sub">Manage your profile, password, and account preferences.</p>
+
+    <!-- Profile -->
+    <div class="settings-section">
+      <div class="settings-section-head">
+        <div>
+          <h2>Profile</h2>
+          <p>Update your name and email address</p>
+        </div>
+        <span class="plan-badge" id="planBadge">free plan</span>
+      </div>
+      <div class="settings-body">
+        <div id="profileAlert"></div>
+        <div class="form-row">
+          <div class="field"><label>Full Name</label><input type="text" id="profName" placeholder="Your name"/></div>
+          <div class="field"><label>Email</label><input type="email" id="profEmail" placeholder="you@example.com"/></div>
+        </div>
+        <div class="save-row">
+          <span class="save-note" id="profileNote">✓ Profile updated</span>
+          <button class="btn btn-primary" id="saveProfileBtn">Save changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="settings-section">
+      <div class="settings-section-head">
+        <div>
+          <h2>Password</h2>
+          <p>Change your account password</p>
+        </div>
+      </div>
+      <div class="settings-body">
+        <div id="passAlert"></div>
+        <div class="field"><label>Current Password</label><input type="password" id="curPass" placeholder="Enter current password"/></div>
+        <div class="form-row">
+          <div class="field"><label>New Password</label><input type="password" id="newPass" placeholder="Min 8 characters"/></div>
+          <div class="field"><label>Confirm New Password</label><input type="password" id="confPass" placeholder="Repeat new password"/></div>
+        </div>
+        <div class="save-row">
+          <span class="save-note" id="passNote">✓ Password changed</span>
+          <button class="btn btn-primary" id="savePassBtn">Update password</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan -->
+    <div class="settings-section">
+      <div class="settings-section-head">
+        <div>
+          <h2>Plan & Billing</h2>
+          <p>Your current subscription</p>
+        </div>
+      </div>
+      <div class="settings-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+          <div>
+            <div style="font-size:18px;font-weight:700;margin-bottom:4px" id="planName">Free Plan</div>
+            <div style="font-size:13px;color:var(--text3)">100 AI requests per day · All 5 tools included</div>
+          </div>
+          <a href="pricing.html" class="btn btn-primary">Upgrade to Pro →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="danger-section">
+      <div class="danger-head">
+        <h2>Danger Zone</h2>
+        <p>Irreversible and destructive actions</p>
+      </div>
+      <div class="danger-body">
+        <p>Permanently delete your account, all saved history, and all associated data. This cannot be undone.</p>
+        <button class="btn-danger" id="deleteAccountBtn">Delete Account</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/toast.js"></script>
+<script src="../js/shared.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!isLoggedIn()) { window.location.href = '/pages/auth.html?tab=login'; return; }
+
+  const user = getUser();
+  // Pre-fill form
+  document.getElementById('profName').value  = user.name  || '';
+  document.getElementById('profEmail').value = user.email || '';
+  document.getElementById('planBadge').textContent = (user.plan || 'free') + ' plan';
+  document.getElementById('planName').textContent  = user.plan === 'pro' ? 'Pro Plan' : 'Free Plan';
+
+  // Sidebar profile
+  document.getElementById('sbProfile').innerHTML = `
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">${user.name}</div>
+    <div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;word-break:break-all">${user.email}</div>
+    <a href="dashboard.html" class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:center;text-decoration:none">Dashboard</a>
+  `;
+});
+
+function showAlert(id, msg, type = 'error') {
+  // Show inline alert (for form context)
+  const el = document.getElementById(id);
+  if (el) {
+    el.className = type === 'error' ? 'alert alert-error' : 'alert alert-success';
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
+  }
+  // Also show toast
+  if (type === 'error') toast.error(msg);
+  else toast.success(msg);
+}
+
+// ── Save Profile ───────────────────────────────────────
+document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+  const name  = document.getElementById('profName').value.trim();
+  const email = document.getElementById('profEmail').value.trim();
+  if (!name || !email) return showAlert('profileAlert', 'Name and email are required.');
+
+  const btn = document.getElementById('saveProfileBtn');
+  btnLoading(btn, true);
+  try {
+    const data = await apiCall('/api/auth/profile', { name, email }, 'PUT');
+    if (!data.success) throw new Error(data.error);
+    // Update local storage with new token + user
+    saveAuth(data.token, data.user);
+    document.getElementById('profileNote').classList.add('show');
+    setTimeout(() => document.getElementById('profileNote').classList.remove('show'), 3000);
+    // Update nav
+    const infoEl = document.getElementById('navUserInfo');
+    if (infoEl) infoEl.textContent = data.user.name.split(' ')[0].toLowerCase();
+  } catch(e) {
+    showAlert('profileAlert', e.message || 'Failed to update profile.');
+  } finally {
+    btnLoading(btn, false, 'Save changes');
+  }
+});
+
+// ── Change Password ────────────────────────────────────
+document.getElementById('savePassBtn').addEventListener('click', async () => {
+  const cur  = document.getElementById('curPass').value;
+  const nw   = document.getElementById('newPass').value;
+  const conf = document.getElementById('confPass').value;
+  if (!cur || !nw || !conf) return showAlert('passAlert', 'Please fill in all password fields.');
+  if (nw !== conf) return showAlert('passAlert', 'New passwords do not match.');
+  if (nw.length < 8) return showAlert('passAlert', 'New password must be at least 8 characters.');
+
+  const btn = document.getElementById('savePassBtn');
+  btnLoading(btn, true);
+  try {
+    const data = await apiCall('/api/auth/password', { currentPassword: cur, newPassword: nw }, 'PUT');
+    if (!data.success) throw new Error(data.error);
+    document.getElementById('curPass').value  = '';
+    document.getElementById('newPass').value  = '';
+    document.getElementById('confPass').value = '';
+    document.getElementById('passNote').classList.add('show');
+    setTimeout(() => document.getElementById('passNote').classList.remove('show'), 3000);
+  } catch(e) {
+    showAlert('passAlert', e.message || 'Failed to change password.');
+  } finally {
+    btnLoading(btn, false, 'Update password');
+  }
+});
+
+// ── Delete Account ─────────────────────────────────────
+document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+  document.getElementById('delModal').classList.remove('hidden');
+});
+
+document.getElementById('confirmDelBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('confirmDelBtn');
+  btn.textContent = 'Deleting...';
+  btn.disabled = true;
+  try {
+    const data = await apiCall('/api/auth/account', null, 'DELETE');
+    if (!data.success) throw new Error(data.error);
+    // Clear everything and go home
+    clearAuth();
+    localStorage.removeItem('am_history');
+    localStorage.removeItem('am_guest_count');
+    window.location.href = '/';
+  } catch(e) {
+    document.getElementById('delAlert').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    btn.textContent = 'Yes, delete my account';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

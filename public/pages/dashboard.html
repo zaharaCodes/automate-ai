@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AutoMate AI — Dashboard</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.dash-layout{
+  display:grid;grid-template-columns:240px 1fr;
+  min-height:100vh;padding-top:62px;
+}
+.dash-sidebar{
+  background:var(--bg1);border-right:1px solid var(--border);
+  padding:24px 14px;position:sticky;top:62px;
+  height:calc(100vh - 62px);overflow-y:auto;
+  display:flex;flex-direction:column;gap:2px;
+}
+.sb-section{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);padding:4px 10px;margin:10px 0 4px}
+.sb-section:first-child{margin-top:0}
+.sb-link{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border-radius:var(--r-sm);color:var(--text2);font-size:13.5px;
+  font-weight:500;text-decoration:none;transition:all 0.15s;
+}
+.sb-link:hover{background:var(--bg3);color:var(--text)}
+.sb-link.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.sb-link svg{flex-shrink:0;color:var(--accent)}
+
+.sb-profile{
+  margin-top:auto;padding:14px;background:var(--bg3);
+  border:1px solid var(--border);border-radius:var(--r);
+}
+.sb-profile-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.sb-profile-email{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;word-break:break-all}
+.sb-profile-plan{
+  display:inline-block;font-family:var(--mono);font-size:9px;
+  text-transform:uppercase;letter-spacing:1px;
+  padding:3px 8px;border-radius:99px;margin-bottom:10px;
+  background:rgba(var(--aRGB),0.1);border:1px solid rgba(var(--aRGB),0.25);color:var(--accent);
+}
+
+.dash-main{padding:40px 48px;overflow-y:auto;min-width:0}
+
+/* Page header */
+.dash-header{margin-bottom:32px}
+.dash-header h1{font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.dash-header p{font-size:14px;color:var(--text2)}
+.dash-greeting{
+  font-size:clamp(22px,3vw,32px);font-weight:800;
+  letter-spacing:-1px;margin-bottom:6px;
+}
+
+/* Stats grid */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:14px;margin-bottom:32px;
+}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;
+  transition:border-color 0.2s;
+}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
+.stat-card-value{font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--text);margin-bottom:4px;line-height:1}
+.stat-card-sub{font-size:12px;color:var(--text3)}
+
+/* Usage bar */
+.usage-wrap{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:28px;margin-bottom:32px;
+  position:relative;overflow:hidden;
+}
+.usage-wrap::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(var(--aRGB),0.4),transparent);
+}
+.usage-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap}
+.usage-left{}
+.usage-label{font-size:16px;font-weight:700;margin-bottom:4px}
+.usage-sub{font-size:13px;color:var(--text3)}
+.usage-right{text-align:right;flex-shrink:0}
+.usage-big{font-size:32px;font-weight:900;letter-spacing:-1.5px;line-height:1}
+.usage-big span{color:var(--text3);font-size:20px;font-weight:400}
+.usage-pct{font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:2px}
+.usage-track{
+  height:8px;background:var(--bg4);border-radius:99px;
+  overflow:hidden;margin-bottom:14px;position:relative;
+}
+.usage-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--accent),var(--cyan));
+  border-radius:99px;
+  transition:width 1.2s cubic-bezier(0.16,1,0.3,1);
+  position:relative;
+}
+.usage-fill::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:20px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25));
+  border-radius:99px;
+}
+.usage-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.usage-note{font-size:12px;color:var(--text3)}
+.usage-dots{display:flex;gap:16px}
+.usage-dot{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-family:var(--mono)}
+.usage-dot::before{content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.usage-dot.used::before{background:var(--accent)}
+.usage-dot.free::before{background:var(--bg4);border:1px solid var(--border2)}
+
+/* Quick launch */
+.ql-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:12px;margin-bottom:32px;
+}
+.ql-btn{
+  display:flex;flex-direction:column;align-items:center;
+  gap:8px;padding:18px 12px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);text-decoration:none;color:var(--text2);
+  font-size:12px;font-weight:600;text-align:center;
+  transition:all 0.2s;cursor:pointer;
+}
+.ql-btn:hover{border-color:rgba(var(--aRGB),0.35);color:var(--accent);transform:translateY(-2px)}
+.ql-btn svg{color:var(--accent)}
+
+/* History */
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.section-head h2{font-size:16px;font-weight:700}
+.section-head a{font-size:12px;color:var(--accent);text-decoration:none}
+
+.hist-list{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.hist-card{
+  display:flex;align-items:center;gap:16px;
+  background:var(--bg2);padding:16px 20px;
+  transition:background 0.18s;cursor:default;
+  border-bottom:1px solid var(--border);
+}
+.hist-card:last-child{border-bottom:none}
+.hist-card:hover{background:var(--bg3)}
+.hist-icon{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.hist-icon.type-email{background:rgba(99,102,241,0.12);color:#818cf8}
+.hist-icon.type-summary{background:rgba(34,211,238,0.12);color:#22d3ee}
+.hist-icon.type-content{background:rgba(245,158,11,0.12);color:#fbbf24}
+.hist-icon.type-chat{background:rgba(16,185,129,0.12);color:#34d399}
+.hist-icon.type-image{background:rgba(244,63,94,0.12);color:#fb7185}
+.hist-body{flex:1;min-width:0}
+.hist-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.hist-badge{
+  font-family:var(--mono);font-size:9px;text-transform:uppercase;
+  letter-spacing:0.8px;padding:2px 7px;border-radius:99px;font-weight:600;
+}
+.hist-badge.type-email{background:rgba(99,102,241,0.12);color:#818cf8}
+.hist-badge.type-summary{background:rgba(34,211,238,0.12);color:#22d3ee}
+.hist-badge.type-content{background:rgba(245,158,11,0.12);color:#fbbf24}
+.hist-badge.type-chat{background:rgba(16,185,129,0.12);color:#34d399}
+.hist-badge.type-image{background:rgba(244,63,94,0.12);color:#fb7185}
+.hist-date{font-size:11px;color:var(--text3);margin-left:auto;flex-shrink:0;font-family:var(--mono)}
+.hist-preview{font-size:13px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:500px}
+.hist-arrow{color:var(--text3);flex-shrink:0;opacity:0;transition:opacity 0.18s}
+.hist-card:hover .hist-arrow{opacity:1}
+
+.empty-state{
+  text-align:center;padding:48px 20px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+}
+.empty-state p{font-size:14px;color:var(--text3);margin-top:10px;margin-bottom:16px}
+
+@media(max-width:1100px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .ql-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:900px){
+  .dash-layout{grid-template-columns:1fr}
+  .dash-sidebar{position:static;height:auto;flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:10px 14px;gap:5px}
+  .sb-section,.sb-profile{display:none}
+  .sb-link{white-space:nowrap;flex-shrink:0}
+  .dash-main{padding:20px 18px}
+  .ql-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:580px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .ql-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-icon"><svg width="52" height="52" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="15" fill="url(#lg)"/><path d="M26 14L31 23H37L30 31.5L32.5 39L26 35.5L19.5 39L22 31.5L15 23H21L26 14Z" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="52" y2="52"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs></svg></div>
+  <div class="ld-name">AutoMate<em>AI</em></div>
+  <div class="ld-track"><div class="ld-fill"></div></div>
+  <div class="ld-msg" id="ldMsg">Loading dashboard...</div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L11.5 7H16L11.5 11L13.5 16L9 13.5L4.5 16L6.5 11L2 7H6.5L9 2Z" fill="white"/></svg></div>
+      <span class="logo-text">AutoMate<em>AI</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="try.html">Try AI</a>
+      <a href="pricing.html">Pricing</a>
+    </div>
+    <div class="nav-actions">
+      <div id="navGuest"><button class="btn btn-ghost" id="navLoginBtn">Sign in</button><button class="btn btn-primary" id="navRegisterBtn">Get started</button></div>
+      <div id="navUser" class="hidden" style="display:flex;align-items:center;gap:8px"><span id="navUserInfo"></span><button class="btn btn-ghost" id="logoutBtn">Logout</button></div>
+    </div>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="sb-section">Menu</div>
+    <a href="dashboard.html" class="sb-link active">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>
+      Dashboard
+    </a>
+    <a href="try.html" class="sb-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Try AI Tools
+    </a>
+    <a href="settings.html" class="sb-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.8"/></svg>
+      Settings
+    </a>
+    <div class="sb-profile" id="sbProfile"></div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-header">
+      <div class="dash-greeting" id="greeting">Good morning 👋</div>
+      <p id="greetingSub">Here's what's happening with your account today.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-label">Requests Today</div>
+        <div class="stat-card-value" id="statToday">—</div>
+        <div class="stat-card-sub" id="statLimit">of 100 limit</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Total Saved</div>
+        <div class="stat-card-value" id="statTotal">—</div>
+        <div class="stat-card-sub">results in history</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Current Plan</div>
+        <div class="stat-card-value" style="font-size:20px;text-transform:uppercase" id="statPlan">—</div>
+        <div class="stat-card-sub"><a href="pricing.html" style="color:var(--accent);text-decoration:none">Upgrade →</a></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Member Since</div>
+        <div class="stat-card-value" style="font-size:18px" id="statSince">—</div>
+        <div class="stat-card-sub">account created</div>
+      </div>
+    </div>
+
+    <!-- Usage bar -->
+    <div class="usage-wrap">
+      <div class="usage-top">
+        <div class="usage-left">
+          <div class="usage-label">Daily AI Requests</div>
+          <div class="usage-sub">Resets every day at midnight</div>
+        </div>
+        <div class="usage-right">
+          <div class="usage-big"><span id="usedNum">0</span><span> / <span id="limitNum">100</span></span></div>
+          <div class="usage-pct" id="usagePct">0% used</div>
+        </div>
+      </div>
+      <div class="usage-track">
+        <div class="usage-fill" id="usageFill" style="width:0%"></div>
+      </div>
+      <div class="usage-foot">
+        <div class="usage-note" id="usageNote">Free plan · <a href="pricing.html" style="color:var(--accent);text-decoration:none">Upgrade for unlimited →</a></div>
+        <div class="usage-dots">
+          <div class="usage-dot used">Used</div>
+          <div class="usage-dot free">Available</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick launch -->
+    <div class="section-head">
+      <h2>Quick Launch</h2>
+      <a href="try.html">View all tools →</a>
+    </div>
+    <div class="ql-grid">
+      <a href="try.html?tool=email" class="ql-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8"/></svg>
+        Email Writer
+      </a>
+      <a href="try.html?tool=summarizer" class="ql-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Summarizer
+      </a>
+      <a href="try.html?tool=content" class="ql-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        Content
+      </a>
+      <a href="try.html?tool=chat" class="ql-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        AI Chat
+      </a>
+      <a href="try.html?tool=image" class="ql-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Image Gen
+      </a>
+    </div>
+
+    <!-- History -->
+    <div class="section-head">
+      <h2>Recent History</h2>
+      <a href="try.html?tool=history">View all →</a>
+    </div>
+    <div id="histList"></div>
+  </main>
+</div>
+
+<script src="../js/toast.js"></script>
+<script src="../js/shared.js"></script>
+<script>
+// Redirect if not logged in
+document.addEventListener('DOMContentLoaded', () => {
+  if (!isLoggedIn()) {
+    window.location.href = '/pages/auth.html?tab=login';
+    return;
+  }
+
+  const user = getUser();
+
+  // Greeting
+  const hour = new Date().getHours();
+  const tod  = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+  document.getElementById('greeting').textContent = `Good ${tod}, ${user.name.split(' ')[0]} 👋`;
+  document.getElementById('greetingSub').textContent = `Here's your AutoMate AI dashboard.`;
+
+  // Sidebar profile
+  document.getElementById('sbProfile').innerHTML = `
+    <div class="sb-profile-name">${user.name}</div>
+    <div class="sb-profile-email">${user.email}</div>
+    <div class="sb-profile-plan">${user.plan || 'free'} plan</div>
+    <a href="settings.html" class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:center">Settings</a>
+  `;
+
+  // Load stats from API
+  loadStats();
+  renderHistory();
+});
+
+async function loadStats() {
+  try {
+    const data = await apiCall('/api/stats', null, 'GET');
+    if (!data.success) return;
+
+    const s     = data.stats;
+    const limit = s.dailyLimit === 'Unlimited' ? 100 : s.dailyLimit;
+    const used  = s.requestsToday || 0;
+    const pct   = Math.min(100, Math.round((used / limit) * 100));
+
+    // Update numbers
+    document.getElementById('usedNum').textContent  = used;
+    document.getElementById('limitNum').textContent = s.dailyLimit === 'Unlimited' ? '∞' : limit;
+    document.getElementById('usagePct').textContent = s.dailyLimit === 'Unlimited' ? 'Unlimited plan' : `${pct}% used today`;
+    document.getElementById('statToday').textContent = used;
+    document.getElementById('statLimit').textContent = `of ${s.dailyLimit === 'Unlimited' ? '∞' : limit} limit`;
+    document.getElementById('statPlan').textContent  = s.plan;
+
+    // Animate bar after paint
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        document.getElementById('usageFill').style.width = (s.dailyLimit === 'Unlimited' ? 8 : pct) + '%';
+      }, 300);
+    });
+
+    // Color bar based on usage
+    const fill = document.getElementById('usageFill');
+    if (pct > 80) fill.style.background = 'linear-gradient(90deg,#f59e0b,#ef4444)';
+    else if (pct > 50) fill.style.background = 'linear-gradient(90deg,var(--accent),#f59e0b)';
+
+    if (s.plan === 'pro') {
+      document.getElementById('usageNote').innerHTML = 'Pro plan · Unlimited requests';
+      fill.style.background = 'linear-gradient(90deg,var(--green),var(--cyan))';
+    }
+
+    if (s.memberSince) {
+      const d = new Date(s.memberSince);
+      document.getElementById('statSince').textContent = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+  } catch(e) {
+    console.log('Stats error:', e.message);
+  }
+}
+
+function getTypeClass(type) {
+  const t = type.toLowerCase();
+  if (t.includes('email'))   return 'type-email';
+  if (t.includes('summar'))  return 'type-summary';
+  if (t.includes('content')) return 'type-content';
+  if (t.includes('chat'))    return 'type-chat';
+  if (t.includes('image'))   return 'type-image';
+  return 'type-chat';
+}
+
+function getTypeIcon(type) {
+  const t = type.toLowerCase();
+  if (t.includes('email'))   return `<rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8"/>`;
+  if (t.includes('summar'))  return `<path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>`;
+  if (t.includes('content')) return `<path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>`;
+  if (t.includes('image'))   return `<rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return `<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>`;
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = now - d;
+  const mins = Math.floor(diff / 60000);
+  const hrs  = Math.floor(diff / 3600000);
+  if (mins < 1)  return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  if (hrs < 24)  return `${hrs}h ago`;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function renderHistory() {
+  const list    = document.getElementById('histList');
+  const history = getHistory();
+  document.getElementById('statTotal').textContent = history.length;
+
+  if (!history.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style="color:var(--text3);margin:0 auto"><path d="M12 8v4l3 3M12 3a9 9 0 100 18A9 9 0 0012 3z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <p>No history yet. Start using the tools and your results will appear here.</p>
+        <a href="try.html" class="btn btn-primary">Launch a tool</a>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = `<div class="hist-list">` + history.slice(0, 8).map(h => {
+    const cls = getTypeClass(h.type);
+    return `
+    <div class="hist-card">
+      <div class="hist-icon ${cls}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">${getTypeIcon(h.type)}</svg>
+      </div>
+      <div class="hist-body">
+        <div class="hist-top">
+          <span class="hist-badge ${cls}">${h.type}</span>
+          <span class="hist-date">${formatDate(h.date)}</span>
+        </div>
+        <div class="hist-preview">${h.input}</div>
+      </div>
+      <svg class="hist-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>`;
+  }).join('') + `</div>`;
+}
+</script>
+</body>
+</html>

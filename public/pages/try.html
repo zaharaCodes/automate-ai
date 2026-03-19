@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AutoMate AI — Try the Tools</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.try-layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh;padding-top:62px}
+
+/* Sidebar */
+.sidebar{
+  background:var(--bg1);border-right:1px solid var(--border);
+  padding:20px 14px;position:sticky;top:62px;
+  height:calc(100vh - 62px);overflow-y:auto;
+  display:flex;flex-direction:column;gap:2px;
+}
+.sb-label{
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:1.2px;color:var(--text3);padding:4px 10px;
+  margin:10px 0 4px;
+}
+.sb-label:first-child{margin-top:0}
+.tool-btn{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border-radius:var(--r-sm);border:none;background:transparent;
+  color:var(--text2);font-family:var(--font);font-size:13.5px;
+  font-weight:500;cursor:pointer;transition:all 0.15s;width:100%;text-align:left;
+}
+.tool-btn:hover{background:var(--bg3);color:var(--text)}
+.tool-btn.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.tool-btn svg{flex-shrink:0;color:var(--accent)}
+
+/* Auth status box */
+.sb-auth{
+  margin-top:auto;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--border);
+}
+.sb-guest{
+  padding:16px;background:var(--bg3);
+}
+.sb-guest-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px}
+.sb-guest-sub{font-size:12px;color:var(--text3);line-height:1.55;margin-bottom:12px}
+.sb-guest ul{
+  list-style:none;margin-bottom:14px;display:flex;flex-direction:column;gap:5px;
+}
+.sb-guest ul li{
+  font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;
+}
+.sb-guest ul li.active-perk{color:var(--green)}
+.sb-guest ul li.active-perk::before,.sb-guest ul li.locked-perk::before{content:'';width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;font-size:10px}
+.sb-guest ul li.active-perk::before{background:rgba(16,185,129,0.15);content:'✓';color:var(--green)}
+.sb-guest ul li.locked-perk::before{background:rgba(255,255,255,0.04);content:'🔒';font-size:9px}
+
+.sb-user{padding:16px;background:var(--bg3)}
+.sb-user-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
+.sb-user-plan{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--accent);margin-bottom:10px}
+.sb-user-perks{list-style:none;display:flex;flex-direction:column;gap:4px}
+.sb-user-perks li{font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px}
+.sb-user-perks li::before{content:'✓';font-size:10px}
+
+/* Main */
+.try-main{padding:36px 44px;overflow-y:auto;min-width:0}
+.tool-panel{display:none}
+.tool-panel.active{display:block;animation:panelIn 0.22s var(--ease)}
+@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.tool-header{margin-bottom:28px}
+.tool-header h1{font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:5px}
+.tool-header p{font-size:13px;color:var(--text2)}
+
+/* Inputs */
+textarea,input[type=text]{
+  width:100%;padding:12px 14px;background:var(--bg2);
+  border:1px solid var(--border2);border-radius:var(--r);
+  color:var(--text);font-family:var(--font);font-size:14px;
+  line-height:1.65;outline:none;transition:border-color 0.2s;
+  resize:vertical;margin-bottom:12px;
+}
+textarea:focus,input[type=text]:focus{border-color:var(--accent)}
+textarea::placeholder,input::placeholder{color:var(--text3)}
+
+.seg-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.seg-btn{
+  padding:7px 13px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--text2);font-family:var(--font);
+  font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;
+}
+.seg-btn:hover{color:var(--text);border-color:var(--border2)}
+.seg-btn.active{background:rgba(var(--aRGB),0.1);border-color:rgba(var(--aRGB),0.35);color:var(--accent)}
+
+.run-btn{margin-bottom:20px}
+
+/* Results */
+.result{display:none;animation:panelIn 0.22s var(--ease)}
+.result.show{display:block}
+
+/* Saved badge */
+.saved-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--green);font-family:var(--mono);
+  padding:4px 10px;background:rgba(16,185,129,0.08);
+  border:1px solid rgba(16,185,129,0.2);border-radius:99px;
+  margin-bottom:10px;
+}
+
+.r-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
+.replies-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.reply-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.reply-type{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--accent);margin-bottom:9px}
+.reply-text{font-size:13px;color:var(--text2);line-height:1.7;white-space:pre-wrap;margin-bottom:10px}
+
+.summary-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;font-size:14px;color:var(--text2);line-height:1.8;white-space:pre-wrap}
+
+.content-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.cs{padding:18px 22px;border-bottom:1px solid var(--border)}
+.cs:last-child{border-bottom:none}
+.cs-lbl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:7px}
+.cs-text{font-size:14px;color:var(--text);line-height:1.7;white-space:pre-wrap}
+.cs-tags{font-size:13px;color:var(--accent);font-family:var(--mono);line-height:1.8}
+
+/* Chat */
+.chat-win{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px;height:360px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:14px;margin-bottom:12px;
+}
+.chat-win::-webkit-scrollbar{width:3px}
+.chat-win::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:99px}
+.msg{display:flex;gap:9px;align-items:flex-start;animation:panelIn 0.2s var(--ease)}
+.msg.user{flex-direction:row-reverse}
+.msg-av{flex-shrink:0;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.msg.ai .msg-av{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.msg.user .msg-av{background:var(--bg4);border:1px solid var(--border2);color:var(--text3)}
+.msg-bubble{background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:10px 14px;font-size:13.5px;line-height:1.7;max-width:80%;color:var(--text2);white-space:pre-wrap}
+.msg.user .msg-bubble{background:rgba(var(--aRGB),0.08);border-color:rgba(var(--aRGB),0.18);color:var(--text)}
+.chat-row{display:flex;gap:9px}
+.chat-row input{flex:1;margin-bottom:0}
+.send-btn{flex-shrink:0;width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm)}
+
+/* Image */
+.img-result{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px}
+.img-loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 20px;color:var(--text3);font-family:var(--mono);font-size:12px;text-align:center}
+.img-out{display:flex;flex-direction:column;align-items:center;gap:14px}
+.img-out img{width:100%;max-width:480px;border-radius:var(--r-sm);border:1px solid var(--border);opacity:0;transition:opacity 0.5s}
+.img-out img.loaded{opacity:1}
+.dl-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text2);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.18s}
+.dl-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+
+/* Voice button */
+.input-wrap{position:relative;margin-bottom:12px}
+.input-wrap textarea,.input-wrap input[type=text]{margin-bottom:0;width:100%}
+.voice-btn{
+  position:absolute;bottom:10px;right:10px;
+  width:32px;height:32px;border-radius:8px;
+  background:var(--bg4);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.18s;color:var(--text3);
+  z-index:2;
+}
+.voice-btn:hover{border-color:rgba(var(--aRGB),0.4);color:var(--accent);background:rgba(var(--aRGB),0.08)}
+.voice-btn.listening{
+  background:rgba(244,63,94,0.12);border-color:rgba(244,63,94,0.4);
+  color:#f43f5e;animation:voicePulse 1s ease-in-out infinite;
+}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,0.3)}50%{box-shadow:0 0 0 6px rgba(244,63,94,0)}}
+
+/* chat voice btn */
+.chat-row .voice-btn{position:static;flex-shrink:0;width:44px;height:44px;border-radius:var(--r-sm)}
+
+/* History panel */
+.hist-panel{display:none}
+.hist-panel.active{display:block;animation:panelIn 0.22s var(--ease)}
+.hist-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
+.hist-item{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s;
+}
+.hist-item:hover{border-color:var(--border2)}
+.hist-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hist-type{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--accent)}
+.hist-date{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.hist-preview{font-size:13px;color:var(--text2);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+@media(max-width:900px){
+  .try-layout{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:10px 14px;gap:5px}
+  .sb-label,.sb-auth{display:none}
+  .tool-btn{white-space:nowrap;flex-shrink:0}
+  .try-main{padding:20px 18px}
+  .replies-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-icon">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="15" fill="url(#lg)"/>
+      <path d="M26 14L31 23H37L30 31.5L32.5 39L26 35.5L19.5 39L22 31.5L15 23H21L26 14Z" fill="white"/>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="52" y2="52"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+    </svg>
+  </div>
+  <div class="ld-name">AutoMate<em>AI</em></div>
+  <div class="ld-track"><div class="ld-fill"></div></div>
+  <div class="ld-msg" id="ldMsg">Loading tools...</div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L11.5 7H16L11.5 11L13.5 16L9 13.5L4.5 16L6.5 11L2 7H6.5L9 2Z" fill="white"/></svg></div>
+      <span class="logo-text">AutoMate<em>AI</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="try.html" class="active">Try AI</a>
+      <a href="pricing.html">Pricing</a>
+    </div>
+    <div class="nav-actions">
+      <div id="navGuest"><button class="btn btn-ghost" id="navLoginBtn">Sign in</button><button class="btn btn-primary" id="navRegisterBtn">Get started</button></div>
+      <div id="navUser" class="hidden" style="display:flex;align-items:center;gap:8px"><span id="navUserInfo"></span><button class="btn btn-ghost" id="logoutBtn">Logout</button></div>
+    </div>
+  </div>
+</nav>
+
+<div class="try-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-label">Tools</div>
+    <button class="tool-btn active" data-tool="email">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8"/></svg>
+      Email Writer
+    </button>
+    <button class="tool-btn" data-tool="summarizer">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Summarizer
+    </button>
+    <button class="tool-btn" data-tool="content">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      Content Creator
+    </button>
+    <button class="tool-btn" data-tool="chat">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      AI Chat
+    </button>
+    <button class="tool-btn" data-tool="image">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Image Generator
+    </button>
+
+    <div class="sb-label" id="sbHistLabel" style="display:none">Account</div>
+    <button class="tool-btn" id="historyBtn" data-tool="history" style="display:none">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3M12 3a9 9 0 100 18A9 9 0 0012 3z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      My History
+    </button>
+
+    <!-- Auth status -->
+    <div class="sb-auth" id="sbAuth"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="try-main">
+
+    <!-- EMAIL -->
+    <div class="tool-panel active" id="panel-email">
+      <div class="tool-header">
+        <h1>Email Writer</h1>
+        <p>Paste any email — get 3 AI replies in professional, casual, and short tones</p>
+      </div>
+      <div class="input-wrap">
+        <textarea id="emailInput" rows="7" placeholder="Paste the email here...
+
+Example:
+Hi, can you send me the Q4 report by Friday? We need it for the board meeting.
+Thanks, Sarah"></textarea>
+        <button class="voice-btn" data-target="emailInput" title="Voice input">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" stroke="currentColor" stroke-width="2"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <button class="btn btn-primary run-btn" id="emailBtn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>
+        Generate 3 replies
+      </button>
+      <div class="result" id="emailResult">
+        <div id="emailSavedBadge" class="saved-badge hidden">✓ Saved to history</div>
+        <div class="r-label">AI Replies</div>
+        <div class="replies-grid" id="repliesGrid"></div>
+      </div>
+    </div>
+
+    <!-- SUMMARIZER -->
+    <div class="tool-panel" id="panel-summarizer">
+      <div class="tool-header">
+        <h1>Summarizer</h1>
+        <p>Paste any long text — get a clean 5-point summary instantly</p>
+      </div>
+      <div class="input-wrap">
+        <textarea id="summaryInput" rows="10" placeholder="Paste your article, document, or long text here..."></textarea>
+        <button class="voice-btn" data-target="summaryInput" title="Voice input">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" stroke="currentColor" stroke-width="2"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <button class="btn btn-primary run-btn" id="summaryBtn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>
+        Summarize
+      </button>
+      <div class="result" id="summaryResult">
+        <div id="summarySavedBadge" class="saved-badge hidden">✓ Saved to history</div>
+        <div class="summary-box" id="summaryOut"></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="tool-panel" id="panel-content">
+      <div class="tool-header">
+        <h1>Content Creator</h1>
+        <p>Give a topic, pick a platform — AI writes a viral-ready post with hashtags</p>
+      </div>
+      <div class="input-wrap">
+        <input type="text" id="contentTopic" placeholder="Enter your topic or idea..."/>
+        <button class="voice-btn" data-target="contentTopic" title="Voice input">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" stroke="currentColor" stroke-width="2"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="seg-row" id="platformBtns">
+        <button class="seg-btn active" data-val="Instagram">Instagram</button>
+        <button class="seg-btn" data-val="LinkedIn">LinkedIn</button>
+        <button class="seg-btn" data-val="Twitter">Twitter / X</button>
+      </div>
+      <button class="btn btn-primary run-btn" id="contentBtn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>
+        Create content
+      </button>
+      <div class="result" id="contentResult">
+        <div id="contentSavedBadge" class="saved-badge hidden">✓ Saved to history</div>
+        <div class="content-box">
+          <div class="cs"><div class="cs-lbl">Caption</div><div class="cs-text" id="cCaption"></div><button class="copy-btn" style="margin-top:9px" onclick="copyText(document.getElementById('cCaption').textContent,this)">Copy</button></div>
+          <div class="cs"><div class="cs-lbl">Hashtags</div><div class="cs-tags" id="cTags"></div><button class="copy-btn" style="margin-top:9px" onclick="copyText(document.getElementById('cTags').textContent,this)">Copy</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="tool-panel" id="panel-chat">
+      <div class="tool-header">
+        <h1>AI Chat</h1>
+        <p>Ask anything — your personal AI assistant, available 24/7</p>
+      </div>
+      <div class="chat-win" id="chatWin">
+        <div class="msg ai">
+          <div class="msg-av">AI</div>
+          <div class="msg-bubble">Hey! I'm AutoMate AI. Ask me anything — I can explain concepts, write code, brainstorm ideas, or answer any question. What do you need?</div>
+        </div>
+      </div>
+      <div class="chat-row">
+        <input type="text" id="chatInput" placeholder="Ask anything... (Enter to send)"/>
+        <button class="voice-btn" data-target="chatInput" title="Voice input" style="flex-shrink:0;width:44px;height:44px;border-radius:var(--r-sm);position:static">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" stroke="currentColor" stroke-width="2"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button class="btn btn-primary send-btn" id="chatSend">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- IMAGE -->
+    <div class="tool-panel" id="panel-image">
+      <div class="tool-header">
+        <h1>Image Generator</h1>
+        <p>Describe your vision — AI creates stunning images in seconds.</p>
+      </div>
+      <div class="input-wrap">
+        <textarea id="imgPrompt" rows="4" placeholder="Describe the image you want...
+
+Example: A futuristic city at sunset, neon lights reflecting on wet streets, cinematic photography"></textarea>
+        <button class="voice-btn" data-target="imgPrompt" title="Voice input">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" stroke="currentColor" stroke-width="2"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="seg-row" id="styleBtns">
+        <button class="seg-btn active" data-val="realistic">Realistic</button>
+        <button class="seg-btn" data-val="artistic">Artistic</button>
+        <button class="seg-btn" data-val="anime">Anime</button>
+        <button class="seg-btn" data-val="3d">3D Render</button>
+      </div>
+      <button class="btn btn-primary run-btn" id="imageBtn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>
+        Generate image
+      </button>
+      <div class="result" id="imageResult">
+        <div id="imageSavedBadge" class="saved-badge hidden">✓ Saved to history</div>
+        <div id="imgOut" class="img-result"></div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="tool-panel hist-panel" id="panel-history">
+      <div class="tool-header">
+        <h1>My History</h1>
+        <p>All your saved AI-generated content from this device</p>
+      </div>
+      <div id="histList"></div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../js/toast.js"></script>
+<script src="../js/shared.js"></script>
+<script>
+const RUN = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>`;
+
+// ── Tool switching ──────────────────────────────────────
+function switchTool(name) {
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.toggle('active', b.dataset.tool === name));
+  document.querySelectorAll('.tool-panel').forEach(p => {
+    p.classList.remove('active');
+    if (p.id === `panel-${name}`) p.classList.add('active');
+  });
+  if (name === 'history') renderHistory();
+}
+document.querySelectorAll('.tool-btn').forEach(btn => btn.addEventListener('click', () => switchTool(btn.dataset.tool)));
+
+// URL param
+const urlTool = new URLSearchParams(location.search).get('tool');
+if (urlTool) switchTool(urlTool);
+
+// ── Segment buttons ─────────────────────────────────────
+function initSegs(id) {
+  let val = document.querySelector(`#${id} .seg-btn.active`)?.dataset.val || '';
+  document.querySelectorAll(`#${id} .seg-btn`).forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll(`#${id} .seg-btn`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active'); val = btn.dataset.val;
+    });
+  });
+  return () => val;
+}
+const getPlatform = initSegs('platformBtns');
+const getStyle    = initSegs('styleBtns');
+
+// ── Sidebar auth box ────────────────────────────────────
+function renderSidebar() {
+  const box = document.getElementById('sbAuth');
+  const histBtn   = document.getElementById('historyBtn');
+  const histLabel = document.getElementById('sbHistLabel');
+  const user = getUser();
+
+  if (isLoggedIn() && user) {
+    histBtn.style.display   = 'flex';
+    histLabel.style.display = 'block';
+    box.innerHTML = `
+      <div class="sb-user">
+        <div class="sb-user-name">${user.name.split(' ')[0]}</div>
+        <div class="sb-user-plan">${user.plan === 'pro' ? 'Pro Plan' : 'Free Plan'}</div>
+        <ul class="sb-user-perks">
+          <li>100 AI requests/day</li>
+          <li>Results auto-saved</li>
+          <li>Full history access</li>
+          <li>Personalized dashboard</li>
+        </ul>
+      </div>
+    `;
+  } else {
+    histBtn.style.display   = 'none';
+    histLabel.style.display = 'none';
+    const used = parseInt(localStorage.getItem('am_guest_count') || '0');
+    const left = Math.max(0, 3 - used);
+    const leftText = left === 3 ? '3 free tries today' : left === 0 ? 'No tries left today' : `${left} of 3 tries left today`;
+    box.innerHTML = `
+      <div class="sb-guest">
+        <div class="sb-guest-title">Guest Mode</div>
+        <div class="sb-guest-sub">${leftText}</div>
+        <ul>
+          <li class="active-perk">Try all 5 AI tools</li>
+          <li class="locked-perk">Save results (sign up)</li>
+          <li class="locked-perk">100 req/day (sign up)</li>
+          <li class="locked-perk">History access (sign up)</li>
+        </ul>
+        <a href="/pages/auth.html?tab=register" class="btn btn-primary btn-full" style="font-size:12px;padding:9px">Sign up free</a>
+      </div>
+    `;
+  }
+}
+renderSidebar();
+
+// ── EMAIL ───────────────────────────────────────────────
+document.getElementById('emailBtn').addEventListener('click', async () => {
+  if (!guestGate()) return;
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email) return;
+  const btn = document.getElementById('emailBtn');
+  btnLoading(btn, true);
+  try {
+    const data = await apiCall('/api/generate-email', { email });
+    if (!data.success) throw new Error(data.error);
+    guestGateSuccess();
+    const grid = document.getElementById('repliesGrid');
+    grid.innerHTML = '';
+    data.replies.forEach(r => {
+      const el = document.createElement('div');
+      el.className = 'reply-card';
+      el.innerHTML = `<div class="reply-type">${r.type}</div><div class="reply-text">${r.text}</div><button class="copy-btn" onclick="copyText(\`${r.text.replace(/`/g,'\\`')}\`,this)">Copy</button>`;
+      grid.appendChild(el);
+    });
+    document.getElementById('emailResult').classList.add('show');
+    if (isLoggedIn()) {
+      saveToHistory('Email Reply', email, data.replies.map(r=>r.text).join('\n\n---\n\n'));
+      document.getElementById('emailSavedBadge').classList.remove('hidden');
+    }
+  } catch(e) { toast.error(e.message || 'Something went wrong'); }
+  finally { btnLoading(btn, false, `${RUN} Generate 3 replies`); }
+});
+
+// ── SUMMARIZER ──────────────────────────────────────────
+document.getElementById('summaryBtn').addEventListener('click', async () => {
+  if (!guestGate()) return;
+  const text = document.getElementById('summaryInput').value.trim();
+  if (!text) return;
+  const btn = document.getElementById('summaryBtn');
+  btnLoading(btn, true);
+  try {
+    const data = await apiCall('/api/summarize', { text });
+    if (!data.success) throw new Error(data.error);
+    guestGateSuccess();
+    document.getElementById('summaryOut').textContent = data.summary;
+    document.getElementById('summaryResult').classList.add('show');
+    if (isLoggedIn()) {
+      saveToHistory('Summary', text, data.summary);
+      document.getElementById('summarySavedBadge').classList.remove('hidden');
+    }
+  } catch(e) { toast.error(e.message || 'Something went wrong'); }
+  finally { btnLoading(btn, false, `${RUN} Summarize`); }
+});
+
+// ── CONTENT ─────────────────────────────────────────────
+document.getElementById('contentBtn').addEventListener('click', async () => {
+  if (!guestGate()) return;
+  const topic    = document.getElementById('contentTopic').value.trim();
+  const platform = getPlatform();
+  if (!topic) return;
+  const btn = document.getElementById('contentBtn');
+  btnLoading(btn, true);
+  try {
+    const data = await apiCall('/api/generate-content', { topic, platform });
+    if (!data.success) throw new Error(data.error);
+    guestGateSuccess();
+    document.getElementById('cCaption').textContent = data.caption;
+    document.getElementById('cTags').textContent    = data.hashtags;
+    document.getElementById('contentResult').classList.add('show');
+    if (isLoggedIn()) {
+      saveToHistory('Content', topic + ' (' + platform + ')', data.caption + '\n' + data.hashtags);
+      document.getElementById('contentSavedBadge').classList.remove('hidden');
+    }
+  } catch(e) { toast.error(e.message || 'Something went wrong'); }
+  finally { btnLoading(btn, false, `${RUN} Create content`); }
+});
+
+// ── CHAT ────────────────────────────────────────────────
+function addMsg(role, text) {
+  const win = document.getElementById('chatWin');
+  const el = document.createElement('div');
+  el.className = `msg ${role}`;
+  el.innerHTML = `<div class="msg-av">${role==='ai'?'AI':'Me'}</div><div class="msg-bubble">${text}</div>`;
+  win.appendChild(el);
+  win.scrollTop = win.scrollHeight;
+}
+async function sendChat() {
+  if (!guestGate()) return;
+  const inp = document.getElementById('chatInput');
+  const msg = inp.value.trim();
+  if (!msg) return;
+  addMsg('user', msg);
+  inp.value = '';
+  const btn = document.getElementById('chatSend');
+  btn.disabled = true;
+  const win = document.getElementById('chatWin');
+  const typing = document.createElement('div');
+  typing.className = 'msg ai';
+  typing.innerHTML = `<div class="msg-av">AI</div><div class="msg-bubble" style="color:var(--text3)"><span class="spinner" style="display:inline-block"></span> Thinking...</div>`;
+  win.appendChild(typing);
+  win.scrollTop = win.scrollHeight;
+  try {
+    const data = await apiCall('/api/chat', { message: msg });
+    typing.remove();
+    if (!data.success) throw new Error(data.error);
+    guestGateSuccess();
+    addMsg('ai', data.response);
+    if (isLoggedIn()) saveToHistory('Chat', msg, data.response);
+  } catch(e) { typing.remove(); addMsg('ai', 'Something went wrong. Please try again.'); }
+  finally { btn.disabled = false; }
+}
+document.getElementById('chatSend').addEventListener('click', sendChat);
+document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} });
+
+// ── IMAGE ───────────────────────────────────────────────
+document.getElementById('imageBtn').addEventListener('click', async () => {
+  if (!guestGate()) return;
+  const prompt = document.getElementById('imgPrompt').value.trim();
+  const style  = getStyle();
+  if (!prompt) return;
+  const btn = document.getElementById('imageBtn');
+  btnLoading(btn, true);
+  const out = document.getElementById('imgOut');
+  document.getElementById('imageResult').classList.add('show');
+  out.innerHTML = `<div class="img-loading"><div class="spinner" style="width:26px;height:26px;border-width:3px"></div>Generating your image...<br/>Usually takes 10–20 seconds</div>`;
+  try {
+    // Server proxies image as raw bytes
+    const token = getToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(API + '/api/generate-image', {
+      method: 'POST', headers,
+      body: JSON.stringify({ prompt, style })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(err.error || `Server error ${res.status}`);
+    }
+
+    const blob = await res.blob();
+    const objectUrl = URL.createObjectURL(blob);
+
+    guestGateSuccess();
+    out.innerHTML = `
+      <div class="img-out">
+        <img src="${objectUrl}" alt="Generated" onload="this.classList.add('loaded')" style="opacity:0;transition:opacity 0.5s;width:100%;max-width:480px;border-radius:var(--r-sm);border:1px solid var(--border);display:block;margin:0 auto"/>
+        <a class="dl-btn" href="${objectUrl}" download="automate-ai-image.jpg">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download Image
+        </a>
+      </div>
+    `;
+    if (isLoggedIn()) {
+      saveToHistory('Image', prompt, objectUrl);
+      document.getElementById('imageSavedBadge').classList.remove('hidden');
+    }
+  } catch(e) { out.innerHTML = `<div class="img-loading" style="color:var(--red)">Failed to generate. Try again.</div>`; }
+  finally { btnLoading(btn, false, `${RUN} Generate image`); }
+});
+
+// ── HISTORY ─────────────────────────────────────────────
+function renderHistory() {
+  const list = document.getElementById('histList');
+  if (!isLoggedIn()) {
+    list.innerHTML = `<div class="hist-empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="color:var(--text3);margin-bottom:12px"><path d="M12 8v4l3 3M12 3a9 9 0 100 18A9 9 0 0012 3z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p style="margin-bottom:12px">Sign in to see your saved history</p>
+      <a href="/pages/auth.html?tab=login" class="btn btn-primary">Sign in</a>
+    </div>`;
+    return;
+  }
+  const history = getHistory();
+  if (!history.length) {
+    list.innerHTML = `<div class="hist-empty">No history yet. Generate something and it'll appear here.</div>`;
+    return;
+  }
+
+  function getTypeClass(type) {
+    const t = type.toLowerCase();
+    if (t.includes('email'))   return 'type-email';
+    if (t.includes('summar'))  return 'type-summary';
+    if (t.includes('content')) return 'type-content';
+    if (t.includes('chat'))    return 'type-chat';
+    if (t.includes('image'))   return 'type-image';
+    return 'type-chat';
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = now - d;
+    const mins = Math.floor(diff / 60000);
+    const hrs  = Math.floor(diff / 3600000);
+    if (mins < 1)  return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    if (hrs < 24)  return `${hrs}h ago`;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  // Add CSS if not already there
+  if (!document.getElementById('histTypeCSS')) {
+    const s = document.createElement('style');
+    s.id = 'histTypeCSS';
+    s.textContent = `
+      .hist-item{background:var(--bg2);border:none;border-bottom:1px solid var(--border);padding:14px 18px;cursor:default;transition:background 0.18s}
+      .hist-item:first-child{border-radius:var(--r) var(--r) 0 0}
+      .hist-item:last-child{border-bottom:none;border-radius:0 0 var(--r) var(--r)}
+      .hist-item:hover{background:var(--bg3)}
+      .hist-wrap{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+      .hist-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+      .hist-badge{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.8px;padding:2px 7px;border-radius:99px;font-weight:600}
+      .hist-badge.type-email{background:rgba(99,102,241,0.12);color:#818cf8}
+      .hist-badge.type-summary{background:rgba(34,211,238,0.12);color:#22d3ee}
+      .hist-badge.type-content{background:rgba(245,158,11,0.12);color:#fbbf24}
+      .hist-badge.type-chat{background:rgba(16,185,129,0.12);color:#34d399}
+      .hist-badge.type-image{background:rgba(244,63,94,0.12);color:#fb7185}
+      .hist-date{font-size:11px;color:var(--text3);margin-left:auto;font-family:var(--mono)}
+      .hist-preview{font-size:13px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    `;
+    document.head.appendChild(s);
+  }
+
+  list.innerHTML = `<div class="hist-wrap">` + history.map(h => {
+    const cls = getTypeClass(h.type);
+    return `<div class="hist-item">
+      <div class="hist-top">
+        <span class="hist-badge ${cls}">${h.type}</span>
+        <span class="hist-date">${formatDate(h.date)}</span>
+      </div>
+      <div class="hist-preview">${h.input}</div>
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+// ── Voice to Text ───────────────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let activeRecognition = null;
+let activeVoiceBtn    = null;
+
+if (SpeechRecognition) {
+  document.querySelectorAll('.voice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const target   = document.getElementById(targetId);
+      if (!target) return;
+
+      // Stop if already recording this btn
+      if (activeRecognition) {
+        activeRecognition.stop();
+        if (activeVoiceBtn) activeVoiceBtn.classList.remove('listening');
+        if (activeVoiceBtn === btn) { activeRecognition = null; activeVoiceBtn = null; return; }
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang             = 'en-US';
+      recognition.interimResults   = true;
+      recognition.maxAlternatives  = 1;
+      recognition.continuous       = false;
+
+      activeRecognition = recognition;
+      activeVoiceBtn    = btn;
+      btn.classList.add('listening');
+      toast.info('🎙️ Listening... speak now', 2200);
+
+      let finalTranscript = '';
+
+      recognition.onresult = (e) => {
+        let interim = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const t = e.results[i][0].transcript;
+          if (e.results[i].isFinal) finalTranscript += t + ' ';
+          else interim = t;
+        }
+        target.value = (finalTranscript + interim).trim();
+        target.dispatchEvent(new Event('input'));
+      };
+
+      recognition.onend = () => {
+        btn.classList.remove('listening');
+        activeRecognition = null;
+        activeVoiceBtn    = null;
+        if (finalTranscript.trim()) toast.success('✓ Voice captured');
+        else toast.warning('No speech detected — try again');
+      };
+
+      recognition.onerror = (e) => {
+        btn.classList.remove('listening');
+        activeRecognition = null;
+        activeVoiceBtn    = null;
+        if (e.error === 'not-allowed') toast.error('Mic blocked — allow microphone in browser settings');
+        else if (e.error === 'no-speech') toast.warning('No speech detected');
+        else toast.error('Voice error: ' + e.error);
+      };
+
+      recognition.start();
+    });
+  });
+} else {
+  // Browser doesn't support — hide voice buttons silently
+  document.querySelectorAll('.voice-btn').forEach(b => b.style.display = 'none');
+}
+
+// ── Keyboard shortcut: Ctrl+Enter = run active tool ─────
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    const activeTool = document.querySelector('.tool-btn.active')?.dataset.tool;
+    const btnMap = { email:'emailBtn', summarizer:'summaryBtn', content:'contentBtn', image:'imageBtn' };
+    const runBtn = btnMap[activeTool] ? document.getElementById(btnMap[activeTool]) : null;
+    if (runBtn && !runBtn.disabled) { e.preventDefault(); runBtn.click(); }
+  }
+});
+
+// ── Welcome toast ───────────────────────────────────────
+setTimeout(() => {
+  if (localStorage.getItem('am_try_welcomed')) return;
+  const user = getUser();
+  if (user) toast.success(`Welcome back, ${user.name.split(' ')[0]}! 👋`, 3000);
+  else toast.info('👋 Try 3 tools free — no signup needed', 3500);
+  localStorage.setItem('am_try_welcomed', '1');
+}, 2600);
+</script>
+</body>
+</html>
